@@ -26,7 +26,7 @@ FOR UV-VIS SPECTRUM:
         compare_plot(df.x.values, df.y.values, p_dict, (PEAK NUMBER))
         
 
-@author: Bo GAO
+@author: Xue FANG, Bo GAO
 """
 
 import pandas as pd
@@ -295,19 +295,3 @@ def compare_plot_lorentz(xdata, ydata, p_dict, indicies, label='', title=''):
         ax.set_title(title, fontsize=20)
     plt.show()
 
-
-        
-
-
-
-
-
-
-
-
-#popt_2gauss, pcov_2gauss = scipy.optimize.curve_fit(_2gaussian, x_array, y_array_2gauss, p0=[amp1, cen1, sigma1, amp2, cen2, sigma2])
-#perr_2gauss = np.sqrt(np.diag(pcov_2gauss))
-#pars_1 = popt_2gauss[0:3]
-#pars_2 = popt_2gauss[3:6]
-#gauss_peak_1 = _1gaussian(x_array, *pars_1)
-#gauss_peak_2 = _1gaussian(x_array, *pars_2)
