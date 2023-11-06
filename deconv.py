@@ -54,17 +54,17 @@ def _n_gaussian(x, n, *args):
         g += gaussian(x, *p)
     return g
 
-#def _n_lorentzian(x, n, *args):
-#    """
-#    args should be [amp0, cen0, sigma0, amp1, cen1, sigma1, ..., ampn, cenn, sigman]
-#    """
-#    if len(args) != 3*n:
-#        raise ValueError('Not enough parameters!')
-#    g = 0
-#    for i in range(n):
-#        p = args[3*i:3*i+3]
-#        g += lorentzian(x, *p)
-#    return g
+def _n_lorentzian(x, n, *args):
+    """
+    args should be [amp0, cen0, sigma0, amp1, cen1, sigma1, ..., ampn, cenn, sigman]
+    """
+    if len(args) != 3*n:
+        raise ValueError('Not enough parameters!')
+    g = 0
+    for i in range(n):
+        p = args[3*i:3*i+3]
+        g += lorentzian(x, *p)
+    return g
 
 def init_guess(n, bound=(400,650), p0=[]):
     """
@@ -93,32 +93,32 @@ def init_guess(n, bound=(400,650), p0=[]):
                 raise ValueError('Invalid input for p0!')
     return np.array([amps, locs, sigmas]).T.reshape(3*n)
 
-#def init_guess_lorentz(n, bound=(400,650), p0=[]):
-#    """
-#    bound gives the range of wavelength
-#    p0 is a list of float or tuple with 3 elements(amp, center, sigma)
-#    """
-#    locs = np.linspace(bound[0], bound[1], n)
-#    amps = np.ones(n, dtype=float)
-#    ws = np.ones(n, dtype=float)
-#    dx = (bound[1]-bound[0])/(n-1)
-#    if len(p0) != 0:
-#        for j, p in enumerate(p0):
-#            if isinstance(p, (int, float)):
-#                for i,x in enumerate(locs):
-#                    if abs(p-x)<=dx/2:
-#                        locs[i] = p
-#                        break 
-#            elif len(p) == 3:
-#                 for i,x in enumerate(locs):
-#                    if abs(p[1]-x)<=dx/2:
-#                        amps[i] = p[0]
-#                        locs[i] = p[1]
-#                        ws[i] = p[2]
-#                        break 
-#            else:
-#                raise ValueError('Invalid input for p0!')
-#    return np.array([amps, locs, ws]).T.reshape(3*n)
+def init_guess_lorentz(n, bound=(400,650), p0=[]):
+    """
+    bound gives the range of wavelength
+    p0 is a list of float or tuple with 3 elements(amp, center, sigma)
+    """
+    locs = np.linspace(bound[0], bound[1], n)
+    amps = np.ones(n, dtype=float)
+    ws = np.ones(n, dtype=float)
+    dx = (bound[1]-bound[0])/(n-1)
+    if len(p0) != 0:
+        for j, p in enumerate(p0):
+            if isinstance(p, (int, float)):
+                for i,x in enumerate(locs):
+                    if abs(p-x)<=dx/2:
+                        locs[i] = p
+                        break 
+            elif len(p) == 3:
+                 for i,x in enumerate(locs):
+                    if abs(p[1]-x)<=dx/2:
+                        amps[i] = p[0]
+                        locs[i] = p[1]
+                        ws[i] = p[2]
+                        break 
+            else:
+                raise ValueError('Invalid input for p0!')
+    return np.array([amps, locs, ws]).T.reshape(3*n)
 
 def fit_n(xdata, ydata, n, p0=[], bias=0):
     bound = (xdata[0]+10,xdata[-1]-10)
@@ -142,14 +142,14 @@ def fit_n(xdata, ydata, n, p0=[], bias=0):
     err = np.mean((ydata-g_func(xdata, *p_fit))**2)
     return p_fit, cov, err
 
-#def fit_n_lorentz(xdata, ydata, n, p0=[]):
-#    bound = (xdata[0]+10,xdata[-1]-10)
-#    p_guess = init_guess_lorentz(n, bound=bound, p0=p0)
-#    def l_func(x, *args):
-#        return _n_lorentzian(x, n, *args)
-#    p_fit, cov = curve_fit(l_func, xdata, ydata, p0=p_guess, bounds=(0, np.inf))
-#    err = np.mean((ydata-l_func(xdata, *p_fit))**2)
-#    return p_fit, cov, err
+def fit_n_lorentz(xdata, ydata, n, p0=[]):
+    bound = (xdata[0]+10,xdata[-1]-10)
+    p_guess = init_guess_lorentz(n, bound=bound, p0=p0)
+    def l_func(x, *args):
+        return _n_lorentzian(x, n, *args)
+    p_fit, cov = curve_fit(l_func, xdata, ydata, p0=p_guess, bounds=(0, np.inf))
+    err = np.mean((ydata-l_func(xdata, *p_fit))**2)
+    return p_fit, cov, err
     
 def plot(xdata, ydata, n, p0=[], title='', label=''):
     p_fit, cov, err = fit_n(xdata, ydata, n, p0=p0)
